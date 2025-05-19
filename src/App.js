@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { ThemeProvider } from '@mui/material/styles';
 import { motion } from 'framer-motion';
 import { theme } from './styles/theme';
@@ -16,40 +17,48 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import GoalProducts from './components/GoalProducts';
 import Login from './components/Auth/Login';
 import Signup from './components/Auth/Signup';
+import PrivacyPolicy from './components/PrivacyPolicy';
 
 function App() {
+  useEffect(() => {
+    // Handle hash links scroll
+    const hash = window.location.hash;
+    if (hash) {
+      const id = hash.replace('#', '');
+      const element = document.getElementById(id);
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth' });
+      }
+    }
+  }, []);
+
   return (
     <Router>
-      <AuthProvider>
-        <CartProvider>
-          <ThemeProvider theme={theme}>
-            <Header />
-            <main style={{ marginTop: '56px' }}>
-              <Routes>
-                <Route path="/" element={
-                  <motion.div
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ duration: 0.5 }}
-                  >
-                    <Hero />
-                    <Products />
-                    <GymPartners />
-                    <ProteinCalculator />
-                    <Goals />
-                    <Testimonials />
-                    <FAQ />
-                  </motion.div>
-                } />
-                <Route path="/goals/:goalId" element={<GoalProducts />} />
-                <Route path="/login" element={<Login />} />
-                <Route path="/signup" element={<Signup />} />
-              </Routes>
-            </main>
-            <Footer />
-          </ThemeProvider>
-        </CartProvider>
-      </AuthProvider>
+      <ThemeProvider theme={theme}>
+        <AuthProvider>
+          <CartProvider>
+            <Routes>
+              <Route path="/" element={
+                <>
+                  <Header />
+                  <Hero />
+                  <Products />
+                  <GymPartners />
+                  <ProteinCalculator />
+                  <Goals />
+                  <Testimonials />
+                  <FAQ />
+                  <Footer />
+                </>
+              } />
+              <Route path="/goals/:goalId" element={<GoalProducts />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/signup" element={<Signup />} />
+              <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+            </Routes>
+          </CartProvider>
+        </AuthProvider>
+      </ThemeProvider>
     </Router>
   );
 }

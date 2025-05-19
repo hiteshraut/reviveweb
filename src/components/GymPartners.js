@@ -46,9 +46,8 @@ const ScratchCoupon = ({ code }) => {
   const [scratchProgress, setScratchProgress] = useState(0);
 
   const handleScratch = (e) => {
-    if (scratchProgress < 50) {
-      setScratchProgress(prev => Math.min(prev + 10, 50));
-    } else {
+    if (!isScratched) {
+      setScratchProgress(100);
       setIsScratched(true);
     }
   };
@@ -65,8 +64,7 @@ const ScratchCoupon = ({ code }) => {
         userSelect: 'none',
         mt: 2
       }}
-      onMouseMove={handleScratch}
-      onTouchMove={handleScratch}
+      onClick={handleScratch}
     >
       <Box
         sx={{
@@ -89,9 +87,8 @@ const ScratchCoupon = ({ code }) => {
         <Box
           sx={{
             position: 'absolute',
-            width: `${100 - scratchProgress}%`,
+            width: '100%',
             height: '100%',
-            right: 0,
             background: 'linear-gradient(45deg, #888 25%, #999 25%, #999 50%, #888 50%, #888 75%, #999 75%)',
             backgroundSize: '10px 10px',
             display: 'flex',
@@ -99,9 +96,13 @@ const ScratchCoupon = ({ code }) => {
             justifyContent: 'center',
             color: '#333',
             zIndex: 3,
-            transition: 'width 0.3s ease',
+            transition: 'transform 0.3s ease-out',
+            transform: isScratched ? 'translateX(100%)' : 'none',
+            '&:hover': {
+              background: 'linear-gradient(45deg, #777 25%, #888 25%, #888 50%, #777 50%, #777 75%, #888 75%)',
+            },
             '&::before': {
-              content: '"Scratch here!"',
+              content: '"Click to reveal discount code"',
               fontSize: '14px',
               fontWeight: 'bold'
             }
@@ -123,12 +124,12 @@ const GymPartners = () => {
   }, []);
 
   return (
-    <Container sx={{ py: 8 }}>
+    <Container sx={{ pt: 4, pb:4 }} id="revive">
       <Typography
         variant="h3"
         sx={{
           textAlign: 'center',
-          mb: 0,
+          mb: 3,
           fontSize: { xs: '2rem', sm: '2.5rem' },
           background: 'linear-gradient(45deg, #07332c 30%, #0a4f45 90%)',
           backgroundClip: 'text',

@@ -122,7 +122,8 @@ const Testimonials = () => {
     <Box
       component="section"
       sx={{
-        py: 8,
+        pt: 4,
+        pb: 4,
         backgroundColor: '#f5f5f5',
         position: 'relative',
         overflow: 'hidden'

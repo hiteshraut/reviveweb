@@ -43,7 +43,11 @@ export const CartProvider = ({ children }) => {
   };
 
   const updateQuantity = (productId, newQuantity) => {
-    if (newQuantity < 1) return;
+    if (newQuantity < 1) {
+      // Remove item when quantity would become zero
+      removeFromCart(productId);
+      return;
+    }
     setCartItems(prevItems =>
       prevItems.map(item =>
         item.id === productId

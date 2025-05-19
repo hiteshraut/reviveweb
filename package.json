@@ -1,5 +1,5 @@
 {
-  "homepage": "https://hiteshraut.github.io/reviveweb",
+ 
   "name": "reviveweb",
   "version": "0.1.0",
   "private": true,
@@ -34,10 +34,9 @@
     "workbox-streams": "^6.6.0"
   },
   "scripts": {
-    "start": "react-scripts start", 
-    "predeploy": "npm run build",
-    "deploy": "gh-pages -d build",
+    "start": "react-scripts start",
     "build": "react-scripts build",
+    "predeploy": "npm run build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },

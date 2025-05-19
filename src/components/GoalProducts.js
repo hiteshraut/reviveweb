@@ -110,7 +110,7 @@ const GoalProducts = () => {
   };
 
   return (
-    <Container sx={{ py: 8 }}>
+    <Container sx={{ pt: 4, pb: 4 }}>
       <Typography
         variant="h3"
         sx={{

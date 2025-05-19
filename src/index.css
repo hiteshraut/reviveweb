@@ -150,3 +150,15 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+/* Add touch-based swiping for mobile devices */
+@media (max-width: 600px) {
+  .instagram-feed-container {
+    touch-action: pan-x;
+    cursor: grab;
+  }
+  
+  .instagram-feed-container:active {
+    cursor: grabbing;
+  }
+}

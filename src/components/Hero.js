@@ -33,7 +33,8 @@ const Hero = () => {
         bgcolor: '#07332c',
         color: 'white',
         position: 'relative',
-        py: { xs: 4, sm: 8 }
+        py: { xs: 8, sm: 8 },
+        pt: { xs: 10, sm: 12 },  // Added extra padding to the top
       }}
     >
       <Container maxWidth="lg">

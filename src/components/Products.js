@@ -7,42 +7,55 @@ import { useCart } from '../context/CartContext';
 
 // Product Card and related components
 const ProductCard = styled(Card)(({ theme }) => ({
+  width: '100%',
+  maxWidth: '350px',
   height: '100%',
   display: 'flex',
   flexDirection: 'column',
-  transition: 'transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out',
+  margin: '0 auto',
+  boxShadow: theme.shadows[2],
   '&:hover': {
-    transform: 'translateY(-4px)',
-    boxShadow: theme.shadows[4],
-  },
+    boxShadow: theme.shadows[4]
+  }
 }));
 
-const ProductImage = styled('div')(({ theme }) => ({
+const ProductImage = styled('div')(() => ({
   position: 'relative',
   width: '100%',
-  height: '250px',
-  backgroundColor: '#f5f5f5',
-  borderRadius: `${theme.shape.borderRadius}px ${theme.shape.borderRadius}px 0 0`,
   overflow: 'hidden',
+  '&:before': {
+    content: '""',
+    display: 'block',
+    paddingTop: '75%' // Changed from 100% to 75% for a 4:3 aspect ratio
+  }
 }));
 
-const StyledImage = styled('img')(({ theme }) => ({
+const StyledImage = styled('img')(() => ({
+  position: 'absolute',
+  top: 0,
+  left: 0,
   width: '100%',
   height: '100%',
   objectFit: 'cover',
   transition: 'transform 0.3s ease-in-out',
   '&:hover': {
-    transform: 'scale(1.05)',
-  },
+    transform: 'scale(1.1)'
+  }
 }));
 
 const NutritionChip = styled(Chip)(({ theme }) => ({
   margin: theme.spacing(0.5),
-  backgroundColor: theme.palette.primary.main,
-  color: '#fff',
+  backgroundColor: '#fff',
+  color: '#07332c',
+  border: '1px solid #07332c',
   '&:hover': {
-    backgroundColor: theme.palette.primary.dark,
+    backgroundColor: '#07332c',
+    color: '#fff',
   },
+  [theme.breakpoints.down('sm')]: {
+    fontSize: '0.75rem',
+    height: '24px'
+  }
 }));
 
 const ProteinTag = styled(Chip)(({ theme }) => ({
@@ -60,6 +73,7 @@ const ProteinTag = styled(Chip)(({ theme }) => ({
 const Products = () => {
   const { addToCart } = useCart();
   const [tabValue, setTabValue] = useState(0);
+  const [showAll, setShowAll] = useState(false);
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const [isSticky, setIsSticky] = useState(false);
@@ -292,16 +306,27 @@ const Products = () => {
     addToCart(product);
   };
 
+  // Get all products for the "All" tab
+  const allProducts = Object.values(products).flat();
+
+  // Get current products based on selected tab
+  const getCurrentProducts = () => {
+    let currentProducts = tabValue === 0 ? allProducts : products[Object.keys(products)[tabValue - 1]];
+    if (!showAll && currentProducts.length > 6) {
+      return currentProducts.slice(0, 6);
+    }
+    return currentProducts;
+  };
+
+  const handleViewAllClick = () => {
+    setShowAll(!showAll);
+  };
+
+  const currentProducts = getCurrentProducts();
+  const totalProducts = tabValue === 0 ? allProducts.length : products[Object.keys(products)[tabValue - 1]].length;
+
   return (
-    <Container 
-      sx={{ 
-        pt: 10,
-        pb: 8,
-        position: 'relative',
-        minHeight: '100vh'
-      }}
-      ref={productsSectionRef}
-    >
+    <Container sx={{ pt: 6, pb: 6, position: 'relative', minHeight: '100vh' }} ref={productsSectionRef}>
       <Typography
         variant="h3"
         sx={{
@@ -331,7 +356,7 @@ const Products = () => {
         <Box
           sx={{
             position: isSticky ? 'fixed' : 'relative',
-            top: isSticky ? '64px' : 'auto',
+            top: isSticky ? '49px' : 'auto',
             left: isSticky ? 0 : 'auto',
             right: isSticky ? 0 : 'auto',
             width: '100%',
@@ -364,20 +389,16 @@ const Products = () => {
                 borderBottom: `1px solid ${theme.palette.divider}`,
               }}
             >
+              <Tab label="All" />
               {Object.keys(products).map((category) => (
                 <Tab key={category} label={category} />
               ))}
             </Tabs>
           </Container>
         </Box>
-        
-        {/* Spacer div to prevent content jump when tabs are fixed */}
-        {isSticky && (
-          <Box sx={{ height: '48px' }} /> // Adjust height to match tabs height
-        )}
+        {isSticky && <Box sx={{ height: '48px' }} />}
       </Box>
 
-      {/* Product grid with animations */}
       <AnimatePresence mode='wait'>
         <motion.div
           key={tabValue}
@@ -386,96 +407,132 @@ const Products = () => {
           exit={{ opacity: 0, y: -20 }}
           transition={{ duration: 0.3 }}
         >
-          <Grid container spacing={3} sx={{ px: { xs: 1, sm: 2 }, display: 'flex', justifyContent: 'flex-start' }}>
-            {products[Object.keys(products)[tabValue]].map((product, index) => (
+          <Grid container spacing={3} sx={{ mt: 2, justifyContent: 'center' }}>
+            {getCurrentProducts().map((product) => (
               <Grid 
-              item 
-              xs={12} 
-              sm={6} 
-              lg={3} 
-              key={index}
-              sx={{
-                display: 'flex',
-                maxWidth: { lg: '31.333%' }
-              }}
-            >
-                <ProductCard elevation={2}>
-                  <ProductImage>
-                    <ProteinTag
-                      label={`Protein: ${product.protein}`}
-                      size="small"
-                    />
-                    <StyledImage
-                      src={getImageUrl(product.name)}
-                      alt={product.name}
-                      loading="lazy"
-                    />
-                  </ProductImage>
-                  <CardContent sx={{ flexGrow: 1, display: 'flex', flexDirection: 'column' }}>
-                    <Typography variant="h6" gutterBottom noWrap>
-                      {product.name}
-                    </Typography>
-                    <Typography 
-                      variant="h6" 
-                      color="primary" 
-                      gutterBottom 
-                      sx={{ fontWeight: 'bold' }}
-                    >
-                      {product.price}
-                    </Typography>
-                    <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1, mb: 2 }}>
-                      {product.tags.map((tag) => (
-                        <Chip 
-                          key={tag} 
-                          label={tag} 
-                          size="small"
-                          sx={{
-                            backgroundColor: 'rgba(7, 51, 44, 0.1)',
-                            color: '#07332c',
-                            fontWeight: 600
-                          }}
-                        />
-                      ))}
-                    </Box>
-                    <Typography 
-                      variant="body2" 
-                      color="text.secondary" 
-                      paragraph
-                      sx={{ mb: 2, flexGrow: 1 }}
-                    >
-                      {product.benefits}
-                    </Typography>
-                    <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1, mb: 2 }}>
-                      {Object.entries(product.nutrition).map(([key, value]) => (
-                        <NutritionChip 
-                          key={key} 
-                          label={`${key}: ${value}`}
-                          size="small"
-                        />
-                      ))}
-                    </Box>
-                    <Button
-                      variant="contained"
-                      startIcon={<AddShoppingCartIcon />}
-                      onClick={() => handleAddToCart(product)}
-                      fullWidth
-                      sx={{
-                        mt: 'auto',
-                        bgcolor: theme.palette.primary.main,
-                        '&:hover': {
-                          bgcolor: theme.palette.primary.dark,
-                        },
-                        fontWeight: 'bold',
-                        py: 1
-                      }}
-                    >
-                      Add to Cart
-                    </Button>
-                  </CardContent>
-                </ProductCard>
+                item 
+                xs={12} 
+                sm={6} 
+                md={4} 
+                key={product.id} 
+                sx={{ 
+                  display: 'flex',
+                  justifyContent: 'center',
+                  maxWidth: { md: '33.333%' }
+                }}
+              >
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -20 }}
+                  transition={{ duration: 0.3 }}
+                  style={{ width: '100%', maxWidth: '350px' }}
+                >
+                  <ProductCard sx={{ width: '100%', display: 'flex', flexDirection: 'column' }}>
+                    <ProductImage>
+                      <ProteinTag
+                        label={`Protein: ${product.protein}`}
+                        size="small"
+                      />
+                      <StyledImage
+                        src={getImageUrl(product.name)}
+                        alt={product.name}
+                        loading="lazy"
+                      />
+                    </ProductImage>
+                    <CardContent sx={{ 
+                      flexGrow: 1, 
+                      display: 'flex', 
+                      flexDirection: 'column',
+                      p: 2,
+                      '&:last-child': { pb: 2 },
+                      gap: 0.5
+                    }}>
+                      <Typography 
+                        variant="h6" 
+                        sx={{
+                          fontSize: { xs: '1rem', sm: '1.25rem' },
+                          lineHeight: { xs: 1.4, sm: 1.6 },
+                          mb: 0.5
+                        }}
+                      >
+                        {product.name}
+                      </Typography>
+                      <Typography 
+                        variant="h6" 
+                        color="primary" 
+                        sx={{ fontWeight: 'bold', mb: 0.5 }}
+                      >
+                        {product.price}
+                      </Typography>
+                      <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5, mb: 0.5 }}>
+                        {product.tags.map((tag) => (
+                          <Chip 
+                            key={tag} 
+                            label={tag} 
+                            size="small"
+                            sx={{
+                              backgroundColor: 'rgba(7, 51, 44, 0.1)',
+                              color: '#07332c',
+                              fontWeight: 600
+                            }}
+                          />
+                        ))}
+                      </Box>
+                      <Typography 
+                        variant="body2"
+                        color="text.secondary"
+                        sx={{ mb: 0.5 }}
+                      >
+                        {product.benefits}
+                      </Typography>
+                      <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5, mb: 1 }}>
+                        {Object.entries(product.nutrition).map(([key, value]) => (
+                          <NutritionChip 
+                            key={key} 
+                            label={`${key}: ${value}`}
+                            size="small"
+                          />
+                        ))}
+                      </Box>
+                      <Button
+                        variant="contained"
+                        startIcon={<AddShoppingCartIcon />}
+                        onClick={() => handleAddToCart(product)}
+                        fullWidth
+                        sx={{
+                          bgcolor: theme.palette.primary.main,
+                          '&:hover': {
+                            bgcolor: theme.palette.primary.dark,
+                          },
+                          fontWeight: 'bold',
+                          py: 1
+                        }}
+                      >
+                        Add to Cart
+                      </Button>
+                    </CardContent>
+                  </ProductCard>
+                </motion.div>
               </Grid>
             ))}
           </Grid>
+          {totalProducts > 6 && (
+            <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
+              <Button
+                variant="contained"
+                onClick={handleViewAllClick}
+                sx={{
+                  backgroundColor: '#07332c',
+                  '&:hover': {
+                    backgroundColor: '#0a4f45'
+                  }
+                }}
+              >
+                {showAll ? 'Show Less' : 'View All'}
+              </Button>
+            </Box>
+          )}
         </motion.div>
       </AnimatePresence>
     </Container>

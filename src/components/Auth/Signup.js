@@ -83,18 +83,19 @@ const Signup = () => {
     <Container 
       maxWidth={false} 
       sx={{ 
-        mt: 8,
-        width: { xs: '100%', md: '35%' },
-        mx: 'auto'
+        mt: { xs: 4, md: 8 },
+        width: { xs: '100%', sm: '80%', md: '35%' },
+        mx: 'auto',
+        px: { xs: 2, sm: 3 }
       }}
     >
-      <Paper elevation={3} sx={{ p: 4 }}>
+      <Paper elevation={3} sx={{ p: { xs: 2, sm: 4 } }}>
         <Typography variant="h4" align="center" gutterBottom>
           Create Account
         </Typography>
         <Box component="form" onSubmit={handleSignup} sx={{ mt: 2 }}>
           <Grid container spacing={3}>
-            <Grid item xs={12}>
+            <Grid item xs={12} sm={12}>
               <TextField
                 fullWidth
                 label="Full Name"
@@ -107,7 +108,7 @@ const Signup = () => {
                 required
               />
             </Grid>
-            <Grid item xs={12}>
+            <Grid item xs={12} sm={12}>
               <TextField
                 fullWidth
                 label="Phone Number"
@@ -121,7 +122,7 @@ const Signup = () => {
                 required
               />
             </Grid>
-            <Grid item xs={12}>
+            <Grid item xs={12} sm={12}>
               <TextField
                 fullWidth
                 label="Email"
@@ -135,7 +136,7 @@ const Signup = () => {
                 required
               />
             </Grid>
-            <Grid item xs={12}>
+            <Grid item xs={12} sm={12}>
               <TextField
                 fullWidth
                 label="Password"
@@ -149,7 +150,7 @@ const Signup = () => {
                 required
               />
             </Grid>
-            <Grid item xs={12}>
+            <Grid item xs={12} sm={12}>
               <TextField
                 fullWidth
                 label="Confirm Password"
