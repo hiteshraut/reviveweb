@@ -56,11 +56,11 @@ const CartDrawer = ({ open, onClose }) => {
       {cart.map((item) => (
         <ListItem key={item.id}>
           <Box sx={{ display: 'flex', alignItems: 'center', width: '100%' }}>
-            <img 
+            {/* <img 
               src={item.image} 
               alt={item.name} 
               style={{ width: 50, height: 50, marginRight: 16, objectFit: 'cover' }} 
-            />
+            /> */}
             <ListItemText 
               primary={item.name}
               secondary={`₹${item.price} | Protein: ${item.protein}`}

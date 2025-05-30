@@ -26,7 +26,7 @@ const Goals = () => {
   ];
 
   return (
-    <Container sx={{ py: 8 }}>
+    <Container sx={{ pt:9, pb: 8 }} id="goals">
       <Typography
         variant="h3"
         sx={{
@@ -91,6 +91,8 @@ const Goals = () => {
                       sx={{
                         mt: 2,
                         bgcolor: '#07332c',
+                        fontSize: '16px',
+                        height: '50px',  // Added fixed height
                         '&:hover': {
                           bgcolor: '#0a4f45'
                         }

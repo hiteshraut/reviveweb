@@ -105,9 +105,12 @@ const CartDrawer = () => {
                 variant="contained"
                 fullWidth
                 onClick={handleCheckout}
-                sx={{ mt: 2 }}
+                sx={{ 
+                  mt: 2,
+                  height: '50px'
+                }}
               >
-                {user ? 'Proceed to Checkout' : 'Login to Checkout'}
+                Checkout
               </Button>
             </Box>
           </>

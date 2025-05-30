@@ -4,6 +4,10 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { styled } from '@mui/material/styles';
 import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart';
 import { useCart } from '../context/CartContext';
+import { useNavigate } from 'react-router-dom';
+// Add this import at the top of the file
+import { products, getAllProducts } from '../data/products';
+
 
 // Product Card and related components
 const ProductCard = styled(Card)(({ theme }) => ({
@@ -70,6 +74,7 @@ const ProteinTag = styled(Chip)(({ theme }) => ({
   },
 }));
 
+
 const Products = () => {
   const { addToCart } = useCart();
   const [tabValue, setTabValue] = useState(0);
@@ -77,7 +82,13 @@ const Products = () => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const [isSticky, setIsSticky] = useState(false);
+  const navigate = useNavigate(); // Make sure this is added
   
+  
+  const handleProductClick = (productId) => {
+    navigate(`/product/${productId}`);
+  };
+
   // Refs for the section elements
   const tabsRef = useRef(null);
   const productsSectionRef = useRef(null);
@@ -112,7 +123,7 @@ const Products = () => {
 
   const getImageUrl = (name) => {
     const filename = name.toLowerCase().replace(/\s+/g, '-');
-    return `/images/products/${filename}.jpg`;
+    return `/images/products/${filename}.png`;
   };
 
   // Product data
@@ -326,7 +337,7 @@ const Products = () => {
   const totalProducts = tabValue === 0 ? allProducts.length : products[Object.keys(products)[tabValue - 1]].length;
 
   return (
-    <Container sx={{ pt: 6, pb: 6, position: 'relative', minHeight: '100vh' }} ref={productsSectionRef}>
+    <Container sx={{ pt: 8, pb: 0, position: 'relative', minHeight: '100vh' }} ref={productsSectionRef} id="products">
       <Typography
         variant="h3"
         sx={{
@@ -356,7 +367,7 @@ const Products = () => {
         <Box
           sx={{
             position: isSticky ? 'fixed' : 'relative',
-            top: isSticky ? '49px' : 'auto',
+            top: isSticky ? '55px' : 'auto',
             left: isSticky ? 0 : 'auto',
             right: isSticky ? 0 : 'auto',
             width: '100%',
@@ -382,9 +393,12 @@ const Products = () => {
                   justifyContent: { xs: 'flex-start', md: 'center' },
                 },
                 '& .MuiTab-root': {
-                  minWidth: { xs: 100, sm: 120 },
+                  minWidth: { xs: 80, sm: 100 },  // Reduced from 100 to 80 for mobile
                   fontWeight: 600,
-                  padding: { xs: '12px 8px', sm: '12px 16px' },
+                  padding: { xs: '8px 12px', sm: '12px 16px' },  // Reduced padding
+                  fontSize: { xs: '0.8rem', sm: '0.9rem' },  // Slightly smaller font
+                  textTransform: 'none',  // Prevents all caps
+                  whiteSpace: 'nowrap',  // Prevents text wrapping
                 },
                 borderBottom: `1px solid ${theme.palette.divider}`,
               }}
@@ -428,7 +442,20 @@ const Products = () => {
                   transition={{ duration: 0.3 }}
                   style={{ width: '100%', maxWidth: '350px' }}
                 >
-                  <ProductCard sx={{ width: '100%', display: 'flex', flexDirection: 'column' }}>
+                
+                  <ProductCard 
+                    sx={{ 
+                      width: '100%', 
+                      display: 'flex', 
+                      flexDirection: 'column',
+                      cursor: 'pointer',
+                      transition: 'transform 0.2s',
+                      '&:hover': {
+                        transform: 'translateY(-4px)'
+                      }
+                    }}
+                    onClick={() => handleProductClick(product.id)}
+                  >
                     <ProductImage>
                       <ProteinTag
                         label={`Protein: ${product.protein}`}
@@ -492,25 +519,33 @@ const Products = () => {
                             key={key} 
                             label={`${key}: ${value}`}
                             size="small"
+                            sx={{
+                              marginLeft: 0
+                            }}
                           />
                         ))}
                       </Box>
                       <Button
-                        variant="contained"
-                        startIcon={<AddShoppingCartIcon />}
-                        onClick={() => handleAddToCart(product)}
-                        fullWidth
-                        sx={{
-                          bgcolor: theme.palette.primary.main,
-                          '&:hover': {
-                            bgcolor: theme.palette.primary.dark,
-                          },
-                          fontWeight: 'bold',
-                          py: 1
-                        }}
-                      >
-                        Add to Cart
-                      </Button>
+                          variant="contained"
+                          startIcon={<AddShoppingCartIcon />}
+                          onClick={(e) => {
+                            e.stopPropagation(); // Stop event from bubbling up to the card
+                            handleAddToCart(product);
+                          }}
+                          fullWidth
+                          sx={{
+                            bgcolor: theme.palette.primary.main,
+                            height: '50px',
+                            '&:hover': {
+                              bgcolor: theme.palette.primary.dark,
+                            },
+                            fontSize: '14px',
+                            fontWeight: 'bold',
+                            py: 1
+                          }}
+                        >
+                          Add to Cart
+                        </Button>
                     </CardContent>
                   </ProductCard>
                 </motion.div>
@@ -524,6 +559,8 @@ const Products = () => {
                 onClick={handleViewAllClick}
                 sx={{
                   backgroundColor: '#07332c',
+                  height: '50px',
+                  fontSize: '14px',
                   '&:hover': {
                     backgroundColor: '#0a4f45'
                   }
@@ -540,3 +577,4 @@ const Products = () => {
 };
 
 export default Products;
+

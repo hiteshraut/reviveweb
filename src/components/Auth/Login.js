@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Box, Container, TextField, Button, Typography, Paper } from '@mui/material';
 import { useAuth } from '../../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
+import AuthHeader from './AuthHeader';
 
 const Login = () => {
   const [phoneNumber, setPhoneNumber] = useState('');
@@ -26,65 +27,83 @@ const Login = () => {
   };
 
   return (
-    <Container maxWidth="sm" sx={{ mt: 8 }}>
-      <Paper elevation={3} sx={{ p: 4 }}>
-        <Typography variant="h4" align="center" gutterBottom>
-          Login
-        </Typography>
-        <Box component="form" onSubmit={handleLogin} sx={{ mt: 2 }}>
-          <TextField
-            fullWidth
-            label="Phone Number"
-            value={phoneNumber}
-            onChange={(e) => setPhoneNumber(e.target.value)}
-            margin="normal"
-            type="tel"
-            required
-            disabled={showOtp}
-          />
-          {!showOtp ? (
-            <Button
-              fullWidth
-              variant="contained"
-              onClick={handleSendOtp}
-              sx={{ mt: 2, bgcolor: '#07332c' }}
-              disabled={!phoneNumber || loading}
-            >
-              Send OTP
-            </Button>
-          ) : (
-            <>
+    <>
+      <AuthHeader />
+      <Box
+        sx={{
+          minHeight: '100vh',
+          pt: 0,
+          bgcolor: '#f5f5f5',
+          display: 'flex',
+          alignItems: 'center'
+        }}
+      >
+        <Container maxWidth="sm" sx={{ mt: 8 }}>
+          <Paper elevation={3} sx={{ p: 4 }}>
+            <Typography variant="h4" align="center" gutterBottom>
+              Login
+            </Typography>
+            <Box component="form" onSubmit={handleLogin} sx={{ mt: 2 }}>
               <TextField
                 fullWidth
-                label="OTP"
-                value={otp}
-                onChange={(e) => setOtp(e.target.value)}
+                label="Phone Number"
+                value={phoneNumber}
+                onChange={(e) => setPhoneNumber(e.target.value)}
                 margin="normal"
-                type="number"
+                type="tel"
                 required
+                disabled={showOtp}
               />
-              <Button
-                fullWidth
-                type="submit"
-                variant="contained"
-                sx={{ mt: 2, bgcolor: '#07332c' }}
-                disabled={!otp || loading}
-              >
-                Login
-              </Button>
-            </>
-          )}
-          <Box sx={{ mt: 2, textAlign: 'center' }}>
-            <Typography variant="body2" color="text.secondary">
-              Don't have an account?{' '}
-              <Button color="primary" onClick={() => navigate('/signup')}>
-                Sign Up
-              </Button>
-            </Typography>
-          </Box>
-        </Box>
-      </Paper>
-    </Container>
+              {!showOtp ? (
+                <Button
+                  fullWidth
+                  variant="contained"
+                  onClick={handleSendOtp}
+                  sx={{ 
+                    mt: 2, 
+                    bgcolor: '#07332c',
+                    height: '50px',
+                    fontSize: '16px',
+                  }}
+                  disabled={!phoneNumber || loading}
+                >
+                  Send OTP
+                </Button>
+              ) : (
+                <>
+                  <TextField
+                    fullWidth
+                    label="OTP"
+                    value={otp}
+                    onChange={(e) => setOtp(e.target.value)}
+                    margin="normal"
+                    type="number"
+                    required
+                  />
+                  <Button
+                    fullWidth
+                    type="submit"
+                    variant="contained"
+                    sx={{ mt: 2, bgcolor: '#07332c' }}
+                    disabled={!otp || loading}
+                  >
+                    Login
+                  </Button>
+                </>
+              )}
+              <Box sx={{ mt: 2, textAlign: 'center' }}>
+                <Typography variant="body2" color="text.secondary">
+                  Don't have an account?{' '}
+                  <Button color="primary" onClick={() => navigate('/signup')}>
+                    Sign Up
+                  </Button>
+                </Typography>
+              </Box>
+            </Box>
+          </Paper>
+        </Container>
+      </Box>
+    </>
   );
 };
 

@@ -6,27 +6,27 @@ import { motion, AnimatePresence } from 'framer-motion';
 const testimonials = [
   {
     id: 1,
-    name: 'Sarah Johnson',
-    role: 'Fitness Enthusiast',
+    name: 'Priya Sharma',
+    role: 'Fitness Trainer',
     image: '/images/testimonials/sarah.jpg',
     rating: 5,
-    text: 'The protein shakes from Revive have become an essential part of my fitness routine. The taste is amazing, and I have seen significant improvements in my recovery time!'
+    text: 'As a fitness trainer, I always recommend Revives natural protein shakes to my clients. The sugar-free formula with added vitamins and minerals has helped many achieve their fitness goals. The best part is the natural ingredients - no artificial sweeteners or preservatives!'
   },
   {
     id: 2,
-    name: 'Mike Chen',
-    role: 'CrossFit Athlete',
+    name: 'Rajesh Patel',
+    role: 'Marathon Runner',
     image: '/images/testimonials/mike.jpg',
     rating: 5,
-    text: 'As a CrossFit athlete, I need high-quality protein to maintain my performance. Revives shakes not only taste great but also provide the perfect nutritional balance.'
+    text: 'I switched to Revives protein shakes because they use only natural ingredients. The perfect blend of proteins, antioxidants, and essential nutrients helps me maintain my energy levels during long runs. Plus, being sugar-free makes it ideal for my diet!'
   },
   {
     id: 3,
-    name: 'Emma Wilson',
-    role: 'Yoga Instructor',
+    name: 'Anjali Desai',
+    role: 'Yoga and Wellness Coach',
     image: '/images/testimonials/emma.jpg',
     rating: 5,
-    text: 'I love how Revive offers plant-based options. The shakes are light yet fulfilling, perfect for my post-yoga recovery. Highly recommended!'
+    text: 'What I love about Revive is their commitment to natural ingredients. Their protein shakes are packed with essential nutrients, completely sugar-free, and blend perfectly with our traditional Indian wellness practices. My clients appreciate the clean, natural energy boost!'
   }
 ];
 

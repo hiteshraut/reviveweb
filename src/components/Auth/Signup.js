@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Box, Container, TextField, Button, Typography, Paper, Grid } from '@mui/material';
 import { useAuth } from '../../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
+import AuthHeader from './AuthHeader';
 
 const Signup = () => {
   const [formData, setFormData] = useState({
@@ -80,137 +81,150 @@ const Signup = () => {
   };
 
   return (
-    <Container 
-      maxWidth={false} 
-      sx={{ 
-        mt: { xs: 4, md: 8 },
-        width: { xs: '100%', sm: '80%', md: '35%' },
-        mx: 'auto',
-        px: { xs: 2, sm: 3 }
-      }}
-    >
-      <Paper elevation={3} sx={{ p: { xs: 2, sm: 4 } }}>
-        <Typography variant="h4" align="center" gutterBottom>
-          Create Account
-        </Typography>
-        <Box component="form" onSubmit={handleSignup} sx={{ mt: 2 }}>
-          <Grid container spacing={3}>
-            <Grid item xs={12} sm={12}>
-              <TextField
-                fullWidth
-                label="Full Name"
-                name="name"
-                value={formData.name}
-                onChange={handleChange}
-                error={Boolean(errors.name)}
-                helperText={errors.name}
-                disabled={showOtp}
-                required
-              />
-            </Grid>
-            <Grid item xs={12} sm={12}>
-              <TextField
-                fullWidth
-                label="Phone Number"
-                name="phoneNumber"
-                value={formData.phoneNumber}
-                onChange={handleChange}
-                error={Boolean(errors.phoneNumber)}
-                helperText={errors.phoneNumber}
-                type="tel"
-                disabled={showOtp}
-                required
-              />
-            </Grid>
-            <Grid item xs={12} sm={12}>
-              <TextField
-                fullWidth
-                label="Email"
-                name="email"
-                value={formData.email}
-                onChange={handleChange}
-                error={Boolean(errors.email)}
-                helperText={errors.email}
-                type="email"
-                disabled={showOtp}
-                required
-              />
-            </Grid>
-            <Grid item xs={12} sm={12}>
-              <TextField
-                fullWidth
-                label="Password"
-                name="password"
-                value={formData.password}
-                onChange={handleChange}
-                error={Boolean(errors.password)}
-                helperText={errors.password}
-                type="password"
-                disabled={showOtp}
-                required
-              />
-            </Grid>
-            <Grid item xs={12} sm={12}>
-              <TextField
-                fullWidth
-                label="Confirm Password"
-                name="confirmPassword"
-                value={formData.confirmPassword}
-                onChange={handleChange}
-                error={Boolean(errors.confirmPassword)}
-                helperText={errors.confirmPassword}
-                type="password"
-                disabled={showOtp}
-                required
-              />
-            </Grid>
-          </Grid>
-
-          {!showOtp ? (
-            <Button
-              fullWidth
-              variant="contained"
-              onClick={handleSendOtp}
-              sx={{ mt: 4, bgcolor: '#07332c' }}
-              disabled={loading}
-            >
-              Sign Up
-            </Button>
-          ) : (
-            <>
-              <TextField
-                fullWidth
-                label="OTP"
-                value={otp}
-                onChange={(e) => setOtp(e.target.value)}
-                margin="normal"
-                type="number"
-                required
-                sx={{ mt: 3 }}
-              />
-              <Button
-                fullWidth
-                type="submit"
-                variant="contained"
-                sx={{ mt: 3, bgcolor: '#07332c' }}
-                disabled={!otp || loading}
-              >
-                Verify & Create Account
-              </Button>
-            </>
-          )}
-
-          <Box sx={{ mt: 3, textAlign: 'center' }}>
-            <Typography variant="body2" color="text.secondary">
-              Already have an account?{' '}
-              <Button color="primary" onClick={() => navigate('/login')}>
-                Login
-              </Button>
+    <>
+      <AuthHeader />
+      <Box
+        sx={{
+          minHeight: '100vh',
+          pt: 0,
+          bgcolor: '#f5f5f5',
+          display: 'flex',
+          alignItems: 'center'
+        }}
+      >
+        <Container 
+          maxWidth={false} 
+          sx={{ 
+            mt: { xs: 4, md: 8 },
+            width: { xs: '100%', sm: '80%', md: '35%' },
+            mx: 'auto',
+            px: { xs: 2, sm: 3 }
+          }}
+        >
+          <Paper elevation={3} sx={{ p: { xs: 2, sm: 4 } }}>
+            <Typography variant="h4" align="center" gutterBottom>
+              Create Account
             </Typography>
-          </Box>
-        </Box>
-      </Paper>
-    </Container>
+            <Box component="form" onSubmit={handleSignup} sx={{ mt: 2 }}>
+              <Grid container spacing={3}>
+                <Grid item xs={12} sm={12}>
+                  <TextField
+                    fullWidth
+                    label="Full Name"
+                    name="name"
+                    value={formData.name}
+                    onChange={handleChange}
+                    error={Boolean(errors.name)}
+                    helperText={errors.name}
+                    disabled={showOtp}
+                    required
+                  />
+                </Grid>
+                <Grid item xs={12} sm={12}>
+                  <TextField
+                    fullWidth
+                    label="Phone Number"
+                    name="phoneNumber"
+                    value={formData.phoneNumber}
+                    onChange={handleChange}
+                    error={Boolean(errors.phoneNumber)}
+                    helperText={errors.phoneNumber}
+                    type="tel"
+                    disabled={showOtp}
+                    required
+                  />
+                </Grid>
+                <Grid item xs={12} sm={12}>
+                  <TextField
+                    fullWidth
+                    label="Email"
+                    name="email"
+                    value={formData.email}
+                    onChange={handleChange}
+                    error={Boolean(errors.email)}
+                    helperText={errors.email}
+                    type="email"
+                    disabled={showOtp}
+                    required
+                  />
+                </Grid>
+                <Grid item xs={12} sm={12}>
+                  <TextField
+                    fullWidth
+                    label="Password"
+                    name="password"
+                    value={formData.password}
+                    onChange={handleChange}
+                    error={Boolean(errors.password)}
+                    helperText={errors.password}
+                    type="password"
+                    disabled={showOtp}
+                    required
+                  />
+                </Grid>
+                <Grid item xs={12} sm={12}>
+                  <TextField
+                    fullWidth
+                    label="Confirm Password"
+                    name="confirmPassword"
+                    value={formData.confirmPassword}
+                    onChange={handleChange}
+                    error={Boolean(errors.confirmPassword)}
+                    helperText={errors.confirmPassword}
+                    type="password"
+                    disabled={showOtp}
+                    required
+                  />
+                </Grid>
+              </Grid>
+
+              {!showOtp ? (
+                <Button
+                  fullWidth
+                  variant="contained"
+                  onClick={handleSendOtp}
+                  sx={{ mt: 4, bgcolor: '#07332c' }}
+                  disabled={loading}
+                >
+                  Sign Up
+                </Button>
+              ) : (
+                <>
+                  <TextField
+                    fullWidth
+                    label="OTP"
+                    value={otp}
+                    onChange={(e) => setOtp(e.target.value)}
+                    margin="normal"
+                    type="number"
+                    required
+                    sx={{ mt: 3 }}
+                  />
+                  <Button
+                    fullWidth
+                    type="submit"
+                    variant="contained"
+                    sx={{ mt: 3, bgcolor: '#07332c' }}
+                    disabled={!otp || loading}
+                  >
+                    Verify & Create Account
+                  </Button>
+                </>
+              )}
+
+              <Box sx={{ mt: 3, textAlign: 'center' }}>
+                <Typography variant="body2" color="text.secondary">
+                  Already have an account?{' '}
+                  <Button color="primary" onClick={() => navigate('/login')}>
+                    Login
+                  </Button>
+                </Typography>
+              </Box>
+            </Box>
+          </Paper>
+        </Container>
+      </Box>
+    </>
   );
 };
 

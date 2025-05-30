@@ -4,7 +4,7 @@ import { Link as MuiLink } from '@mui/material';
 
 const Footer = () => {
   return (
-    <Box component="footer" sx={{ bgcolor: '#07332c', color: 'white', py: 6 }}>
+    <Box component="footer" sx={{ bgcolor: '#07332c', color: 'white', pt: 6, pb:11 }}>
       <Container>
         <Grid container spacing={4}>
           <Grid size={{ xs: 12, sm: 4 }}>

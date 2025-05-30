@@ -124,7 +124,7 @@ const GymPartners = () => {
   }, []);
 
   return (
-    <Container sx={{ pt: 4, pb:4 }} id="revive">
+    <Container sx={{ pt: 9, pb:4 }} id="revive">
       <Typography
         variant="h3"
         sx={{
@@ -196,8 +196,10 @@ const GymPartners = () => {
                     </Typography>
                     <Box
                       sx={{
-                        background: '#07332c',
-                        color: 'white',
+                        borderColor: '#07332c',
+                        borderWidth: 2,
+                        borderStyle: 'solid',
+                        color: '07332c',
                         p: 1,
                         borderRadius: '8px',
                         textAlign: 'center',

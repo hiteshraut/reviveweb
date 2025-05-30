@@ -1,4 +1,4 @@
-import { AppBar, Toolbar, Typography, IconButton, Badge, Menu, MenuItem, Avatar } from '@mui/material';
+import { AppBar, Toolbar, IconButton, Menu, MenuItem, Avatar, Box } from '@mui/material';
 import { ShoppingCart as ShoppingCartIcon, AccountCircle } from '@mui/icons-material';
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
@@ -46,12 +46,11 @@ const Header = () => {
   return (
     <>
       <AppBar position="fixed">
-        <Toolbar>
-          <Typography 
-            variant="h6" 
-            component="div" 
-            sx={{ 
-              flexGrow: 1, 
+        <Toolbar sx={{ justifyContent: 'space-between' }}>
+          <Box
+            sx={{
+              display: 'flex',
+              alignItems: 'center',
               cursor: 'pointer',
               '&:hover': {
                 opacity: 0.8
@@ -59,13 +58,13 @@ const Header = () => {
             }}
             onClick={handleLogoClick}
           >
-            Revive
-          </Typography>
-          <IconButton color="inherit" onClick={() => setIsCartOpen(true)}>
-            <Badge badgeContent={cartItemCount} color="error">
-              <ShoppingCartIcon />
-            </Badge>
-          </IconButton>
+            <img
+              src="/images/revive-logo.svg"
+              alt="Revive Logo"
+              style={{ height: '32px', marginRight: '8px' }}
+            />
+          </Box>
+          
           <IconButton color="inherit" onClick={handleProfileClick}>
             {user ? (
               <Avatar sx={{ width: 32, height: 32, bgcolor: '#07332c' }}>
@@ -75,6 +74,7 @@ const Header = () => {
               <AccountCircle />
             )}
           </IconButton>
+        </Toolbar>
           <Menu
             anchorEl={anchorEl}
             open={Boolean(anchorEl)}
@@ -104,7 +104,7 @@ const Header = () => {
               <MenuItem onClick={handleLogin}>Login/Signup</MenuItem>
             )}
           </Menu>
-        </Toolbar>
+        
       </AppBar>
       <CartDrawer open={isCartOpen} onClose={() => setIsCartOpen(false)} />
     </>

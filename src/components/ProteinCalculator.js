@@ -63,16 +63,16 @@ const ProteinCalculator = () => {
 
   return (
     <Container maxWidth="md" sx={{ py: 4 }}>
-      <Paper elevation={3} sx={{ p: 4 }}>
-        <Typography variant="h3" component="h2" gutterBottom align="center">
+      <Paper elevation={3} sx={{ p: { xs: 2, sm: 4 } }}>
+        <Typography variant="h3" component="h2" gutterBottom align="center" sx={{ fontSize: { xs: '2rem', sm: '3rem' } }}>
           Protein Calculator
         </Typography>
         <Typography variant="body1" paragraph align="center">
           Calculate your daily protein requirements based on your weight, activity level, and fitness goals.
         </Typography>
 
-        <Grid container spacing={3}>
-          <Grid item xs={12} sm={6}>
+        <Grid container spacing={3} sx={{ width: '100%', margin: 0 }}>
+          <Grid item xs={12} sm={{ width: '50%'}} sx={{ width: '100%', padding: { xs: 1, sm: 2 } }}>
             <TextField
               fullWidth
               label="Weight"
@@ -83,10 +83,11 @@ const ProteinCalculator = () => {
               InputProps={{
                 inputProps: { min: 0 }
               }}
+              sx={{ width: '100%' }}
             />
           </Grid>
-          <Grid item xs={12} sm={6}>
-            <FormControl fullWidth>
+          <Grid item xs={12} sm={{ width: '50%'}}  sx={{ width: '100%', padding: { xs: 1, sm: 2 } }}>
+            <FormControl fullWidth sx={{ width: '100%' }}>
               <InputLabel>Weight Unit</InputLabel>
               <Select
                 name="weightUnit"
@@ -100,8 +101,8 @@ const ProteinCalculator = () => {
             </FormControl>
           </Grid>
 
-          <Grid item xs={12}>
-            <FormControl fullWidth>
+          <Grid item xs={12} sx={{ width: '100%', padding: { xs: 1, sm: 2 } }}>
+            <FormControl fullWidth sx={{ width: '100%' }}>
               <InputLabel>Activity Level</InputLabel>
               <Select
                 name="activityLevel"
@@ -116,8 +117,8 @@ const ProteinCalculator = () => {
             </FormControl>
           </Grid>
 
-          <Grid item xs={12}>
-            <FormControl fullWidth>
+          <Grid item xs={12} sx={{ width: '100%', padding: { xs: 1, sm: 2 } }}>
+            <FormControl fullWidth sx={{ width: '100%' }}>
               <InputLabel>Goal</InputLabel>
               <Select
                 name="goal"
@@ -132,7 +133,7 @@ const ProteinCalculator = () => {
             </FormControl>
           </Grid>
 
-          <Grid item xs={12}>
+          <Grid item xs={12} sx={{ width: '100%', padding: { xs: 1, sm: 2 } }}>
             <Button
               fullWidth
               variant="contained"
@@ -140,6 +141,12 @@ const ProteinCalculator = () => {
               size="large"
               onClick={calculateProtein}
               disabled={!formData.weight}
+              sx={{
+                width: '100%',
+                height: '50px',
+                fontSize: '14px',
+                padding: '16px 32px'
+              }}
             >
               Calculate
             </Button>
