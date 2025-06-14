@@ -1,19 +1,19 @@
 import { AppBar, Toolbar, IconButton, Menu, MenuItem, Avatar, Box } from '@mui/material';
-import { ShoppingCart as ShoppingCartIcon, AccountCircle } from '@mui/icons-material';
-import { useCart } from '../context/CartContext';
+import { AccountCircle } from '@mui/icons-material';
+//import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
 import { useState } from 'react';
 import CartDrawer from './CartDrawer';
 import { useNavigate } from 'react-router-dom';
 
 const Header = () => {
-  const { cartItems: cart } = useCart();
+ // const { cartItems: cart } = useCart();
   const { user, logout } = useAuth();
   const navigate = useNavigate();
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
 
-  const cartItemCount = cart?.reduce((total, item) => total + item.quantity, 0) || 0;
+  // const cartItemCount = cart?.reduce((total, item) => total + item.quantity, 0) || 0;
 
   const handleProfileClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -61,7 +61,7 @@ const Header = () => {
             <img
               src="/images/revive-logo.svg"
               alt="Revive Logo"
-              style={{ height: '32px', marginRight: '8px' }}
+              style={{ height: '40px', marginRight: '8px' }}
             />
           </Box>
           
@@ -73,7 +73,7 @@ const Header = () => {
             ) : (
               <AccountCircle />
             )}
-          </IconButton>
+          </IconButton> 
         </Toolbar>
           <Menu
             anchorEl={anchorEl}

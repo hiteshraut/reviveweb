@@ -38,7 +38,7 @@ const Login = () => {
           alignItems: 'center'
         }}
       >
-        <Container maxWidth="sm" sx={{ mt: 8 }}>
+        <Container maxWidth="sm" >
           <Paper elevation={3} sx={{ p: 4 }}>
             <Typography variant="h4" align="center" gutterBottom>
               Login
@@ -84,7 +84,7 @@ const Login = () => {
                     fullWidth
                     type="submit"
                     variant="contained"
-                    sx={{ mt: 2, bgcolor: '#07332c' }}
+                    sx={{ mt: 2, bgcolor: '#07332c', height: '50px', fontSize: '16px' }}
                     disabled={!otp || loading}
                   >
                     Login

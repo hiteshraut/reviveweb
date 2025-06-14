@@ -17,8 +17,8 @@ const Hero = () => {
       icon: CheckCircleOutlineIcon
     },
     {
-      title: 'Nutrition Transparency',
-      description: 'Know what you consume',
+      title: 'Freshly made to order',
+      description: 'Enjoy delicious shake crafted with care',
       icon: CheckCircleOutlineIcon
     },
     {
@@ -54,7 +54,7 @@ const Hero = () => {
 
   return (
     <Box
-      component="section"
+      component="section" id="hero"
       sx={{
         
         width: '100%',

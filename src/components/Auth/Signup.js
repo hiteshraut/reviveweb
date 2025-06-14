@@ -106,7 +106,7 @@ const Signup = () => {
               Create Account
             </Typography>
             <Box component="form" onSubmit={handleSignup} sx={{ mt: 2 }}>
-              <Grid container spacing={3}>
+              <Grid container spacing={3} display="grid">
                 <Grid item xs={12} sm={12}>
                   <TextField
                     fullWidth
@@ -183,7 +183,7 @@ const Signup = () => {
                   fullWidth
                   variant="contained"
                   onClick={handleSendOtp}
-                  sx={{ mt: 4, bgcolor: '#07332c' }}
+                  sx={{ mt: 4, bgcolor: '#07332c', height: '50px', fontSize: '16px' }}
                   disabled={loading}
                 >
                   Sign Up
@@ -204,7 +204,7 @@ const Signup = () => {
                     fullWidth
                     type="submit"
                     variant="contained"
-                    sx={{ mt: 3, bgcolor: '#07332c' }}
+                    sx={{ mt: 3, bgcolor: '#07332c', height: '50px', fontSize: '16px' }}
                     disabled={!otp || loading}
                   >
                     Verify & Create Account

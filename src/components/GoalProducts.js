@@ -1,51 +1,89 @@
-import { useState } from 'react';
-import { Box, Container, Typography, Card, CardContent, Grid, Chip, Button } from '@mui/material';
+import React, { useState } from 'react';
+import { 
+  Box, 
+  Container, 
+  Typography, 
+  Grid, 
+  Chip, 
+  Button, 
+  IconButton,
+  Snackbar,
+  Alert,
+  useTheme
+} from '@mui/material';
 import { motion } from 'framer-motion';
 import { styled } from '@mui/material/styles';
 import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart';
-import ArrowBackIcon from '@mui/icons-material/ArrowBack'; // Add this import
+import AddIcon from '@mui/icons-material/Add';
+import RemoveIcon from '@mui/icons-material/Remove';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { useCart } from '../context/CartContext';
-import { useParams, useNavigate } from 'react-router-dom'; // Add useNavigate
-import Header from './Header'; // Add this import
+import { useParams, useNavigate } from 'react-router-dom';
+import Header from './Header';
+import { products } from '../data/products';
 
-// Reuse the styled components from Products.js
-const ProductCard = styled(Card)(({ theme }) => ({
-  height: '100%',
+// Updated ProductCard with consistent height (same as TimedProducts)
+const ProductCard = styled(motion.div)(({ theme }) => ({
+  width: '100%',
+  maxWidth: { xs: '100%', sm: '350px' },
   display: 'flex',
   flexDirection: 'column',
-  transition: 'transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out',
+  margin: '0 auto',
+  boxShadow: theme.shadows[2],
+  backgroundColor: '#fff',
+  borderRadius: '8px',
   '&:hover': {
-    transform: 'translateY(-4px)',
     boxShadow: theme.shadows[4],
+  },
+  // Consistent height for desktop, auto for mobile
+  [theme.breakpoints.up('md')]: {
+    height: '100%', // Let grid control the height
+    minHeight: '650px', // Minimum height for consistency
+  },
+  [theme.breakpoints.down('md')]: {
+    height: 'auto',
+    minHeight: '500px',
   },
 }));
 
-const ProductImage = styled('div')(({ theme }) => ({
+const ProductImage = styled('div')(() => ({
   position: 'relative',
   width: '100%',
-  height: '250px',
-  backgroundColor: '#f5f5f5',
-  borderRadius: `${theme.shape.borderRadius}px ${theme.shape.borderRadius}px 0 0`,
   overflow: 'hidden',
+  flexShrink: 0, // Prevent image from shrinking
+  '&:before': {
+    content: '""',
+    display: 'block',
+    paddingTop: '75%',
+  },
 }));
 
-const StyledImage = styled('img')(({ theme }) => ({
+const StyledImage = styled('img')(() => ({
+  position: 'absolute',
+  top: 0,
+  left: 0,
   width: '100%',
   height: '100%',
   objectFit: 'cover',
   transition: 'transform 0.3s ease-in-out',
   '&:hover': {
-    transform: 'scale(1.05)',
+    transform: 'scale(1.1)',
   },
 }));
 
 const NutritionChip = styled(Chip)(({ theme }) => ({
   margin: theme.spacing(0.5),
-  backgroundColor: theme.palette.primary.main,
-  color: '#fff',
+  backgroundColor: '#fff',
+  color: '#07332c',
+  border: '1px solid #07332c',
   '&:hover': {
-    backgroundColor: theme.palette.primary.dark,
+    backgroundColor: '#07332c',
+    color: '#fff',
   },
+  [theme.breakpoints.down('sm')]: {
+    fontSize: '0.75rem',
+    height: '24px'
+  }
 }));
 
 const ProteinTag = styled(Chip)(({ theme }) => ({
@@ -60,211 +98,110 @@ const ProteinTag = styled(Chip)(({ theme }) => ({
   },
 }));
 
+// New styled components from TimedProducts
+const QuantityControl = styled(Box)(({ theme }) => ({
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'space-between',
+  backgroundColor: '#f5f5f5',
+  borderRadius: '4px',
+  padding: '4px',
+  border: `2px solid ${theme.palette.primary.main}`,
+  height: '50px',
+}));
+
+const QuantityButton = styled(IconButton)(({ theme }) => ({
+  backgroundColor: theme.palette.primary.main,
+  color: '#fff',
+  width: '36px',
+  height: '36px',
+  borderRadius: '4px',
+  '&:hover': {
+    backgroundColor: theme.palette.primary.dark,
+  },
+  '&:disabled': {
+    backgroundColor: '#e0e0e0',
+    color: '#999',
+  }
+}));
+
+// New styled component for content area with flexible layout
+const ProductContent = styled(Box)(({ theme }) => ({
+  flexGrow: 1,
+  display: 'flex',
+  flexDirection: 'column',
+  padding: theme.spacing(2),
+  gap: theme.spacing(0.5),
+  minHeight: 0, // Allow content to shrink if needed
+}));
+
+// Styled component for main content that can expand
+const FlexibleContent = styled(Box)(({ theme }) => ({
+  display: 'flex',
+  flexDirection: 'column',
+  gap: theme.spacing(0.5),
+  flexGrow: 1, // This will make content expand to fill available space
+  minHeight: 0,
+}));
+
 const GoalProducts = () => {
   const { goalId } = useParams();
-  const { addToCart } = useCart();
-  const navigate = useNavigate(); // Add this
+  const { addToCart, removeFromCart, cartItems, updateCartItemQuantity } = useCart();
+  const navigate = useNavigate();
+  const theme = useTheme();
+  const [toastOpen, setToastOpen] = useState(false);
+  const [toastMessage, setToastMessage] = useState('');
+  const [toastSeverity, setToastSeverity] = useState('success');
 
-  // Product data (same as in Products.js)
-   // Product data
-   const products = {
-    'Pre-Workout': [
-      {
-        id: 'pre-1',
-        name: 'TRIPLE-CHARGED MOCHA ENERGIZER',
-        price: '₹190',
-        protein: '8g',
-        tags: ['HIGH ENERGY', 'WEIGHT LOSS'],
-        benefits: 'Provides sustained, powerful energy for 2-3 hours with green tea\'s L-theanine balancing coffee\'s caffeine for focused energy without jitters.',
-        nutrition: {
-          'Calories': '110 kcal',
-          'Protein': '8g',
-          'Carbs': '12g',
-          'Fat': '2.5g',
-          'Caffeine': '~240mg'
-        }
-      },
-      {
-        id: 'pre-2',
-        name: 'COFFEE CINNAMON PRE-WORKOUT',
-        price: '₹170',
-        protein: '8g',
-        tags: ['ENERGY BOOST', 'WEIGHT LOSS'],
-        benefits: 'Quick-acting caffeine boost with sustained release, enhanced focus and alertness, cinnamon helps stabilize blood sugar during workout.',
-        nutrition: {
-          'Calories': '95 kcal',
-          'Protein': '8g',
-          'Carbs': '10g',
-          'Fat': '2g',
-          'Calcium': '120mg',
-          'Caffeine': '~90mg'
-        }
-      }
-      // {
-      //   id: 'pre-3',
-      //   name: 'IMPROVED MASALA CHAI ENERGIZER',
-      //   price: '₹170',
-      //   protein: '7g',
-      //   tags: ['MODERATE ENERGY', 'WEIGHT GAIN'],
-      //   benefits: 'Sustained energy release for 1-2 hour workouts, sharper mental focus and reaction time, enhanced thermogenic effect for better calorie burn.',
-      //   nutrition: {
-      //     'Calories': '120 kcal',
-      //     'Protein': '7g',
-      //     'Carbs': '15g',
-      //     'Fat': '3g',
-      //     'Iron': '1.2mg',
-      //     'Magnesium': '40mg'
-      //   }
-      // }
-    ],
-    'Post-Workout': [
-      {
-        id: 'post-1',
-        name: 'MALAI KULFI THANDAI RECOVERY',
-        price: '₹210',
-        protein: '24g',
-        tags: ['PREMIUM RECOVERY', 'WEIGHT GAIN'],
-        benefits: 'Festival favorite with enhanced protein for superior recovery, authentic kulfi flavor with traditional adaptogens support post-workout stress management, cooling properties perfect for recovery after summer workouts.',
-        nutrition: {
-          'Calories': '175 kcal',
-          'Protein': '24g',
-          'Carbs': '8g',
-          'Fat': '6g',
-          'Calcium': '150mg',
-          'Iron': '1.5mg'
-        }
-      },
-      {
-        id: 'post-2',
-        name: 'ELECTROLYTE REPLENISHER',
-        price: '₹175',
-        protein: '24g',
-        tags: ['HYDRATION', 'WEIGHT LOSS'],
-        benefits: 'Rapidly replenishes electrolytes lost during sweating, perfect carb-to-protein ratio for optimal recovery, L-citrulline from watermelon reduces muscle soreness.',
-        nutrition: {
-          'Calories': '195 kcal',
-          'Protein': '24g',
-          'Carbs': '35g',
-          'Fat': '0.5g',
-          'Potassium': '680mg',
-          'Vitamin C': '30mg'
-        }
-      },
-      {
-        id: 'post-3',
-        name: 'CHOCOLATE BERRY RECOVERY',
-        price: '₹185',
-        protein: '24g',
-        tags: ['ANTIOXIDANT BOOST', 'WEIGHT LOSS'],
-        benefits: 'Strawberries provide vitamin C and antioxidants that accelerate recovery, cocoa flavanols improve blood flow to muscles, antioxidants reduce muscle soreness and inflammation.',
-        nutrition: {
-          'Calories': '195 kcal',
-          'Protein': '24g',
-          'Carbs': '22g',
-          'Fat': '2.5g',
-          'Vitamin C': '45mg',
-          'Calcium': '200mg'
-        }
-      },
-      {
-        id: 'post-4',
-        name: 'PROTEIN MANGO LASSI',
-        price: '₹195',
-        protein: '24g',
-        tags: ['INDIAN FAVORITE', 'WEIGHT GAIN'],
-        benefits: 'Perfect balance of carbs and protein for recovery, probiotics from yogurt support gut health and immunity, rich in vitamins A and C for immune system support.',
-        nutrition: {
-          'Calories': '195 kcal',
-          'Protein': '24g',
-          'Carbs': '20g',
-          'Fat': '2.5g',
-          'Calcium': '250mg',
-          'Vitamin C': '40mg'
-        }
-      }
-    ],
-    'Meal Replacement': [
-      {
-        id: 'meal-1',
-        name: 'COMPLETE CHHATTISGARHI NUTRITION',
-        price: '₹245',
-        protein: '30g',
-        tags: ['REGIONAL SPECIAL', 'WEIGHT GAIN'],
-        benefits: 'Combines traditional Chhattisgarhi nutrition with modern fitness science, exceptional protein content supports significant muscle building, complete amino acid profile from multiple protein sources.',
-        nutrition: {
-          'Calories': '285 kcal',
-          'Protein': '30g',
-          'Carbs': '22g',
-          'Fat': '5g',
-          'Iron': '3.5mg',
-          'Calcium': '250mg'
-        }
-      },
-      {
-        id: 'meal-2',
-        name: 'MALAI KULFI BANANA SHAKE',
-        price: '₹250',
-        protein: '27g',
-        tags: ['DESSERT-INSPIRED', 'WEIGHT GAIN'],
-        benefits: 'Dessert-like satisfaction with complete nutrition, traditional Indian flavors provide unique offering, excellent for weight gain and muscle building programs.',
-        nutrition: {
-          'Calories': '280 kcal',
-          'Protein': '27g',
-          'Carbs': '30g',
-          'Fat': '6g',
-          'Calcium': '300mg',
-          'Potassium': '450mg'
-        }
-      },
-      {
-        id: 'meal-3',
-        name: 'PEANUT BUTTER PROTEIN MAX',
-        price: '₹240',
-        protein: '30g',
-        tags: ['MUSCLE BUILDER', 'WEIGHT GAIN'],
-        benefits: 'Ideal macronutrient ratio for muscle building, complete amino acid profile for protein synthesis, balanced combination of simple and complex carbs, healthy monounsaturated fats support hormone production.',
-        nutrition: {
-          'Calories': '285 kcal',
-          'Protein': '30g',
-          'Carbs': '30g',
-          'Fat': '8g',
-          'Calcium': '300mg',
-          'Zinc': '2mg'
-        }
-      }
-    ],
-    'Seasonal': [
-      {
-        id: 'seasonal-1',
-        name: 'GREEN DETOX CLEANSE',
-        price: '₹195',
-        protein: '24g',
-        tags: ['SUMMER SPECIAL', 'WEIGHT LOSS'],
-        benefits: 'Perfect for summer detoxification, high fiber content supports digestive health, rich in antioxidants and vitamins for immune support.',
-        nutrition: {
-          'Calories': '185 kcal',
-          'Protein': '24g',
-          'Carbs': '12g',
-          'Fat': '6g',
-          'Fiber': '7g',
-          'Vitamin K': '120μg'
-        }
-      }
-    ]
+  // Add useEffect to scroll to top when component mounts
+  React.useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
+  // Function to get cart item quantity
+  const getCartItemQuantity = (productId) => {
+    const item = cartItems.find(item => item.id === productId);
+    return item ? item.quantity : 0;
   };
 
-  // Filter products based on goal
+  // Updated goalProducts to include all products based on tags
   const goalProducts = {
-    'weight-gain': ['MALAI KULFI THANDAI RECOVERY', 'COMPLETE CHHATTISGARHI NUTRITION', 'MALAI KULFI BANANA SHAKE'],
-    'weight-loss': ['TRIPLE-CHARGED MOCHA ENERGIZER', 'ELECTROLYTE REPLENISHER', 'GREEN DETOX CLEANSE'],
-    'general-fitness': ['COFFEE CINNAMON PRE-WORKOUT', 'CHOCOLATE BERRY RECOVERY', 'PEANUT BUTTER PROTEIN MAX']
+    'weight-gain': [
+      'NUTTY COFFEE BLAST',
+      'CARAMEL COFFEE ENERGIZER',
+      'MALAI KULFI THANDAI RECOVERY',
+      'PROTEIN MANGO LASSI',
+      'COOKIE DOUGH RECOVERY',
+      'PEANUT BUTTER PROTEIN MAX',
+      'COMPLETE CHHATTISGARHI NUTRITION',
+      'MALAI KULFI BANANA SHAKE',
+      'OVERNIGHT OATS PROTEIN MEAL',
+      'MALAI KULFI FESTIVAL TREAT',
+      'COCONUT BLUEBERRY MUFFIN DELIGHT',
+      'TROPICAL MANGO SMOOTHIE'
+    ],
+    'weight-loss': [
+      'TRIPLE-CHARGED MOCHA ENERGIZER',
+      'COFFEE CINNAMON PRE-WORKOUT',
+      'ELECTROLYTE REPLENISHER',
+      'CHOCOLATE BERRY RECOVERY',
+      'GREEN DETOX CLEANSE',
+      'WATERMELON MINT REFRESHER',
+      'COCONUT LIME COOLER'
+    ],
+    'general-fitness': [
+      'COFFEE CINNAMON PRE-WORKOUT',
+      'CHOCOLATE BERRY RECOVERY',
+      'PEANUT BUTTER PROTEIN MAX'
+    ]
   };
 
   const getImageUrl = (name) => {
     const filename = name.toLowerCase().replace(/\s+/g, '-');
-    return `/images/products/${filename}.jpg`;
+    return `/images/products/${filename}.png?=1`;
   };
 
+  // Access products from the imported data (same as TimedProducts)
   const filteredProducts = Object.values(products)
     .flat()
     .filter(product => goalProducts[goalId]?.includes(product.name));
@@ -275,24 +212,180 @@ const GoalProducts = () => {
     'general-fitness': 'General Fitness'
   };
 
+  // Toast functions
+  const showToast = (message, severity = 'success') => {
+    setToastMessage(message);
+    setToastSeverity(severity);
+    setToastOpen(true);
+  };
+
+  const handleCloseToast = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+    setToastOpen(false);
+  };
+
+  // Cart handling functions (same as TimedProducts)
+  const handleAddToCart = (product, event) => {
+    // Prevent event bubbling
+    if (event) {
+      event.stopPropagation();
+      event.preventDefault();
+    }
+    addToCart(product);
+    showToast(`${product.name} added to cart!`, 'success');
+  };
+
+  const handleIncreaseQuantity = (product, event) => {
+    // Prevent event bubbling
+    if (event) {
+      event.stopPropagation();
+      event.preventDefault();
+    }
+    addToCart(product);
+    const newQuantity = getCartItemQuantity(product.id) + 1;
+    showToast(`${product.name} quantity updated to ${newQuantity}`, 'success');
+  };
+
+  const handleDecreaseQuantity = (product, event) => {
+    // Prevent event bubbling
+    if (event) {
+      event.stopPropagation();
+      event.preventDefault();
+    }
+    
+    const currentQuantity = getCartItemQuantity(product.id);
+    
+    if (currentQuantity > 1) {
+      // If quantity is more than 1, decrease by 1
+      if (updateCartItemQuantity) {
+        updateCartItemQuantity(product.id, currentQuantity - 1);
+      } else {
+        // Alternative method: remove the item and add it back with quantity - 1
+        removeFromCart(product.id);
+        for (let i = 0; i < currentQuantity - 1; i++) {
+          addToCart(product);
+        }
+      }
+      showToast(`${product.name} quantity updated to ${currentQuantity - 1}`, 'info');
+    } else if (currentQuantity === 1) {
+      // If quantity is 1, remove the item completely
+      removeFromCart(product.id);
+      showToast(`${product.name} removed from cart`, 'info');
+    }
+  };
+
+  const handleProductClick = (productId) => {
+    navigate(`/product/${productId}`);
+  };
+
+  // Render cart controls function (same as TimedProducts)
+  const renderCartControls = (product) => {
+    const quantity = getCartItemQuantity(product.id);
+    
+    if (quantity === 0) {
+      return (
+        <Button
+          variant="contained"
+          startIcon={<AddShoppingCartIcon />}
+          onClick={(e) => handleAddToCart(product, e)}
+          fullWidth
+          sx={{
+            bgcolor: theme.palette.primary.main,
+            height: '50px',
+            '&:hover': {
+              bgcolor: theme.palette.primary.dark,
+            },
+            fontSize: '14px',
+            fontWeight: 'bold',
+            py: 1,
+          }}
+        >
+          Add to Cart
+        </Button>
+      );
+    }
+
+    return (
+      <QuantityControl
+        onClick={(e) => {
+          e.stopPropagation();
+          e.preventDefault();
+        }}
+      >
+        <QuantityButton
+          onClick={(e) => handleDecreaseQuantity(product, e)}
+          onMouseDown={(e) => {
+            e.stopPropagation();
+            e.preventDefault();
+          }}
+          onTouchStart={(e) => {
+            e.stopPropagation();
+            e.preventDefault();
+          }}
+          size="small"
+        >
+          <RemoveIcon fontSize="small" />
+        </QuantityButton>
+        
+        <Typography 
+          variant="h6" 
+          sx={{ 
+            fontWeight: 'bold',
+            color: theme.palette.primary.main,
+            minWidth: '40px',
+            textAlign: 'center',
+            userSelect: 'none'
+          }}
+          onClick={(e) => {
+            e.stopPropagation();
+            e.preventDefault();
+          }}
+          onMouseDown={(e) => {
+            e.stopPropagation();
+            e.preventDefault();
+          }}
+          onTouchStart={(e) => {
+            e.stopPropagation();
+            e.preventDefault();
+          }}
+        >
+          {quantity}
+        </Typography>
+        
+        <QuantityButton
+          onClick={(e) => handleIncreaseQuantity(product, e)}
+          onMouseDown={(e) => {
+            e.stopPropagation();
+            e.preventDefault();
+          }}
+          onTouchStart={(e) => {
+            e.stopPropagation();
+            e.preventDefault();
+          }}
+          size="small"
+        >
+          <AddIcon fontSize="small" />
+        </QuantityButton>
+      </QuantityControl>
+    );
+  };
+
   return (
     <>
       <Header />
-      <Container sx={{ pt: 10, pb: 4 }}>
+      <Container sx={{ pt: 10, pb: 15 }}>
         <Box sx={{ display: 'flex', alignItems: 'center', mb: 4 }}>
-          <Button
-            startIcon={<ArrowBackIcon />}
-            onClick={() => navigate('/')}
-            sx={{
-              color: '#07332c',
-              '&:hover': {
-                bgcolor: 'rgba(7, 51, 44, 0.04)'
-              }
-            }}
+          <IconButton 
+            onClick={() => navigate(-1)} 
+            sx={{ mb: 2 }}
+            aria-label="back"
           >
-            Back to Home
-          </Button>
+            <ArrowBackIcon />  <span>Back</span>
+          </IconButton>
         </Box>
+        
         <Typography
           variant="h3"
           sx={{
@@ -309,57 +402,160 @@ const GoalProducts = () => {
           {goalTitles[goalId]} Shakes
         </Typography>
 
-      <Grid container spacing={4}>
-        {filteredProducts.map((product, index) => (
-          <Grid size={{ xs: 12, sm: 6, md: 4 }} key={product.id}>
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: index * 0.2 }}
+        <Grid container spacing={3} sx={{ justifyContent: 'center', alignItems: 'stretch' }}>
+          {filteredProducts.map((product, index) => (
+            <Grid 
+              item 
+              xs={12} 
+              sm={6} 
+              md={4} 
+              key={product.id}
+              sx={{
+                display: 'flex',
+                justifyContent: 'center',
+              }}
             >
-              <ProductCard>
-                <ProductImage>
-                  <StyledImage src={getImageUrl(product.name)} alt={product.name} />
-                  <ProteinTag label={`${product.protein} Protein`} />
-                </ProductImage>
-                <CardContent sx={{ flexGrow: 1, display: 'flex', flexDirection: 'column' }}>
-                  <Typography gutterBottom variant="h6" component="h2">
-                    {product.name}
-                  </Typography>
-                  <Typography variant="body2" color="text.secondary" paragraph>
-                    {product.benefits}
-                  </Typography>
-                  <Box sx={{ mt: 2 }}>
-                    {product.tags.map((tag) => (
-                      <NutritionChip key={tag} label={tag} />
-                    ))}
-                  </Box>
-                  <Box sx={{ mt: 'auto', pt: 2, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <Typography variant="h6" component="p">
-                      {product.price}
-                    </Typography>
-                    <Button
-                      variant="contained"
-                      startIcon={<AddShoppingCartIcon />}
-                      onClick={() => addToCart(product)}
-                      sx={{
-                        bgcolor: '#07332c',
-                        fontSize: '16px',
-                        '&:hover': {
-                          bgcolor: '#0a4f45'
-                        }
-                      }}
-                    >
-                      Add to Cart
-                    </Button>
-                  </Box>
-                </CardContent>
-              </ProductCard>
-            </motion.div>
-          </Grid>
-        ))}
-      </Grid>
-    </Container>
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: index * 0.2 }}
+                style={{ width: '100%', display: 'flex', justifyContent: 'center' }}
+              >
+                <ProductCard
+                  sx={{
+                    width: '100%',
+                    maxWidth: '350px',
+                    cursor: 'pointer',
+                    transition: 'transform 0.2s',
+                    '&:hover': {
+                      transform: 'translateY(-4px)',
+                    },
+                  }}
+                  onClick={() => handleProductClick(product.id)}
+                >
+                  <ProductImage>
+                    <ProteinTag label={`Protein: ${product.protein}`} size="small" />
+                    <StyledImage 
+                      src={getImageUrl(product.name)} 
+                      alt={product.name}
+                      loading="lazy"
+                    />
+                  </ProductImage>
+                  
+                  <ProductContent>
+                    <FlexibleContent>
+                      <Typography 
+                        variant="h6" 
+                        sx={{
+                          fontSize: { xs: '1rem', sm: '1.25rem' },
+                          lineHeight: { xs: 1.4, sm: 1.6 },
+                          mb: 0.5,
+                          minHeight: { md: '3rem' }, // Consistent title height on desktop
+                          display: 'flex',
+                          alignItems: 'flex-start',
+                        }}
+                      >
+                        {product.name}
+                      </Typography>
+                      
+                      <Typography 
+                        variant="h6" 
+                        color="primary" 
+                        sx={{ fontWeight: 'bold', mb: 0.5 }}
+                      >
+                        {product.price}
+                      </Typography>
+                      
+                      <Box sx={{ 
+                        display: 'flex', 
+                        flexWrap: 'wrap', 
+                        gap: 0.5, 
+                        mb: 0.5,
+                        minHeight: { md: '2rem' }
+                      }}>
+                        {product.tags.map((tag) => (
+                          <Chip 
+                            key={tag} 
+                            label={tag} 
+                            size="small"
+                            sx={{
+                              backgroundColor: 'rgba(7, 51, 44, 0.1)',
+                              color: '#07332c',
+                              fontWeight: 600
+                            }}
+                          />
+                        ))}
+                      </Box>
+                      
+                      <Typography 
+                        variant="body2"
+                        color="text.secondary"
+                        sx={{ 
+                          mb: 0.5,
+                          minHeight: { md: '3rem' }, // Consistent benefits height on desktop
+                          display: '-webkit-box',
+                          WebkitLineClamp: { xs: 'none', md: 3 },
+                          WebkitBoxOrient: 'vertical',
+                          overflow: 'hidden',
+                          textOverflow: 'ellipsis',
+                          lineHeight: 1.5,
+                        }}
+                      >
+                        {product.benefits}
+                      </Typography>
+                      
+                      <Box sx={{ 
+                        display: 'flex', 
+                        flexWrap: 'wrap', 
+                        gap: 0.5, 
+                        mb: 1,
+                        minHeight: { md: '4rem' }, // Consistent nutrition height on desktop
+                        alignContent: 'flex-start'
+                      }}>
+                        {Object.entries(product.nutrition).map(([key, value]) => (
+                          <NutritionChip 
+                            key={key} 
+                            label={`${key}: ${value}`}
+                            size="small"
+                            sx={{ marginLeft: 0 }}
+                          />
+                        ))}
+                      </Box>
+                    </FlexibleContent>
+                    
+                    {/* Cart controls container with fixed height - always at bottom */}
+                    <Box sx={{ height: '50px', mt: 'auto', flexShrink: 0 }}>
+                      {renderCartControls(product)}
+                    </Box>
+                  </ProductContent>
+                </ProductCard>
+              </motion.div>
+            </Grid>
+          ))}
+        </Grid>
+      </Container>
+
+      {/* Toast Notification */}
+      <Snackbar
+        open={toastOpen}
+        autoHideDuration={3000}
+        onClose={handleCloseToast}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+      >
+        <Alert
+          onClose={handleCloseToast}
+          severity={toastSeverity}
+          variant="filled"
+          sx={{ 
+            width: '100%',
+            '& .MuiAlert-message': {
+              fontWeight: 600
+            }
+          }}
+        >
+          {toastMessage}
+        </Alert>
+      </Snackbar>
     </>
   );
 };

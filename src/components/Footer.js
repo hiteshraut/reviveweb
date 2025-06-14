@@ -1,6 +1,7 @@
 import { Box, Container, Typography, Grid } from '@mui/material';
 import { Link as RouterLink } from 'react-router-dom';
 import { Link as MuiLink } from '@mui/material';
+import { Link } from 'react-router-dom';
 
 const Footer = () => {
   return (
@@ -8,14 +9,28 @@ const Footer = () => {
       <Container>
         <Grid container spacing={4}>
           <Grid size={{ xs: 12, sm: 4 }}>
-            <Typography variant="h6">Revive</Typography>
+              <Link to="/">
+                <Box
+                  component="img"
+                  src="/images/revive-logo.svg"
+                  alt="Revive"
+                  sx={{
+                    height: '40px',
+                    cursor: 'pointer',
+                    transition: 'transform 0.2s',
+                    '&:hover': {
+                      transform: 'scale(1.05)'
+                    }
+                  }}
+                />
+            </Link>
             <Typography variant="body2">Recharge Rebuild Restore</Typography>
           </Grid>
           <Grid size={{ xs: 12, sm: 4 }}>
             <Typography variant="h6">Quick Links</Typography>
-            <MuiLink component={RouterLink} to="#" color="inherit" display="block">Products</MuiLink>
+            {/* <MuiLink component={RouterLink} to="#" color="inherit" display="block">Products</MuiLink>
             <MuiLink component={RouterLink} to="#" color="inherit" display="block">Gym Partners</MuiLink>
-            <MuiLink component={RouterLink} to="#" color="inherit" display="block">FAQ</MuiLink>
+            <MuiLink component={RouterLink} to="#" color="inherit" display="block">FAQ</MuiLink> */}
             <MuiLink component={RouterLink} to="/privacy-policy" color="inherit" display="block">Privacy Policy</MuiLink>
           </Grid>
           <Grid size={{ xs: 12, sm: 4 }}>
@@ -28,13 +43,13 @@ const Footer = () => {
               <Typography variant="body2">Email: info@revivenutrition.in</Typography>
             </MuiLink>
             <MuiLink 
-              href="https://wa.me/919202320023" 
+              href="https://wa.me/919243022440" 
               target="_blank" 
               rel="noopener noreferrer" 
               color="inherit" 
               sx={{ textDecoration: 'none' }}
             >
-              <Typography variant="body2">Phone: +91 9202320023</Typography>
+              <Typography variant="body2">Phone: +91 9243022440</Typography>
             </MuiLink>
           </Grid>
         </Grid>

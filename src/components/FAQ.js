@@ -14,16 +14,16 @@ const faqs = [
   },
   {
     question: 'Are Revive shakes suitable for vegetarians?',
-    answer: 'Yes! We offer both whey-based and plant-based protein options to accommodate different dietary preferences.',
+    answer: 'Yes! We offer whey-based protein options to accommodate different dietary preferences.',
   },
   {
     question: 'How long do Revive shakes stay fresh?',
-    answer: 'Once mixed, consume within 2 hours. Our powder products have a shelf life of 12 months when stored in a cool, dry place.',
+    answer: 'Once mixed, consume within 2 hours. Our products have a shelf life of 1 day when stored in a cool, dry place.',
   },
-  {
-    question: 'Do you offer custom protein blends?',
-    answer: 'Yes, we can create custom blends based on your specific fitness goals and dietary requirements. Contact us for personalized options.',
-  },
+  // {
+  //   question: 'Do you offer custom protein blends?',
+  //   answer: 'Yes, we can create custom blends based on your specific fitness goals and dietary requirements. Contact us for personalized options.',
+  // },
 ];
 
 const FAQ = () => {

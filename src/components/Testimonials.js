@@ -45,7 +45,7 @@ const TestimonialCard = ({ testimonial }) => {
     >
       <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
         <Avatar
-          src={testimonial.image}
+          // src={testimonial.image}
           alt={testimonial.name}
           sx={{
             width: 120,
